@@ -26,5 +26,43 @@
       }
     ],
     "loginCheckJs": "var response = result;\nif (response.headers().get(\"Content-Type\") != \"audio/mpeg\") {\n    var body = JSON.parse(response.body().string())\n    if (body.status == 40000001) {\n        source.login()\n        java.getHeaderMap().putAll(source.getHeaderMap(true))\n        response = java.getResponse()\n    } else {\n        throw body.message\n    }\n}\nresponse"
+  },
+  {
+    "id": -48,
+    "name": "3-99.Qwen3-TTS [通用版-下拉选择音色]",
+    "url": "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation,{\"method\": \"POST\",\"headers\": {\"Authorization\": \"Bearer {{source.getLoginInfoMap().get('ApiKey')}}\",\"Content-Type\": \"application/json\"},\"body\": {\"model\": \"qwen3-tts-flash-2025-11-27\",\"input\": {\"text\": \"{{speakText}}\",\"voice\": \"{{source.getLoginInfoMap().get('Voice')}}\",\"language_type\": \"Chinese\"}}}",
+    "contentType": "audio/mpeg",
+    "loginUrl": "function login(){var loginInfo = source.getLoginInfoMap();\nvar apiKey = loginInfo.get('ApiKey');\nvar voice = loginInfo.get('Voice');\nif (!apiKey || apiKey === 'sk-your-api-key-here') {\n    throw '请输入有效的 DashScope API Key';\n}\nif (!voice) {\n    throw '请选择一个音色';\n}\nreturn '登录成功,API Key 验证通过';\n}",
+    "loginUi": [
+      {
+        "name": "ApiKey",
+        "type": "password"
+      },
+      {
+        "name": "Voice",
+        "type": "select",
+        "options": [
+          "Cherry",
+          "Serena",
+          "Ethan",
+          "Chelsie",
+          "Dylan",
+          "Jada",
+          "Sunny",
+          "Nofish",
+          "Jennifer",
+          "Ryan",
+          "Katerina",
+          "Elias",
+          "li",
+          "Marcus",
+          "Roy",
+          "Peter",
+          "Rocky",
+          "Kiki"
+        ]
+      }
+    ],
+    "loginCheckJs": "result"
   }
 ]

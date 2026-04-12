@@ -17,6 +17,7 @@ import io.legado.app.data.entities.rule.RowUi
 import io.legado.app.databinding.DialogLoginBinding
 import io.legado.app.databinding.ItemFilletTextBinding
 import io.legado.app.databinding.ItemSourceEditBinding
+import io.legado.app.databinding.ItemSourceSpinnerBinding
 import io.legado.app.lib.dialogs.alert
 import io.legado.app.lib.theme.primaryColor
 import io.legado.app.ui.about.AppLogDialog
@@ -97,6 +98,39 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                             handleButtonClick(source, rowUi, loginUi)
                         }
                     }
+
+                    RowUi.Type.select -> {
+                        val options = rowUi.options ?: emptyList()
+                        if (options.isNotEmpty()) {
+                            val spinnerBinding = ItemSourceSpinnerBinding.inflate(
+                                layoutInflater,
+                                binding.root,
+                                false
+                            )
+                            binding.flexbox.addView(spinnerBinding.root)
+                            spinnerBinding.root.id = index + 1000
+                            spinnerBinding.tvLabel.text = rowUi.name
+
+                            // 设置适配器
+                            val adapter = android.widget.ArrayAdapter(
+                                requireContext(),
+                                android.R.layout.simple_spinner_item,
+                                options
+                            ).also {
+                                it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                            }
+                            spinnerBinding.spinner.adapter = adapter
+
+                            // 设置默认值
+                            val currentValue = loginInfo?.get(rowUi.name)
+                            if (!currentValue.isNullOrBlank()) {
+                                val position = options.indexOf(currentValue)
+                                if (position >= 0) {
+                                    spinnerBinding.spinner.setSelection(position)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         } catch (e: NullPointerException) {
@@ -158,6 +192,12 @@ class SourceLoginDialog : BaseDialogFragment(R.layout.dialog_login, true) {
                     val rowView = binding.root.findViewById<View>(index + 1000)
                     ItemSourceEditBinding.bind(rowView).editText.text?.let {
                         loginData[rowUi.name] = it.toString()
+                    }
+                }
+                "select" -> {
+                    val rowView = binding.root.findViewById<View>(index + 1000)
+                    ItemSourceSpinnerBinding.bind(rowView).spinner.selectedItem?.toString()?.let {
+                        loginData[rowUi.name] = it
                     }
                 }
             }
